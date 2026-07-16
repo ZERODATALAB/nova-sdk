@@ -517,7 +517,7 @@ Releases are published to PyPI as `nova-sdk`.
 
 ## License
 
-NOVA SDK is licensed under the **MIT License**. See [LICENSE](../LICENSE) for the full text.
+NOVA SDK is licensed under the **MIT License**. See [LICENSE](LICENSE) for the full text.
 
 **SPINA is a public good.** The SPINA protocol — the design of the cryptographic spine, its consensus rules, and its Merkle proof format — belongs to everyone who runs a node. The SDK implementation is MIT-licensed, meaning you can use it in commercial products, but the protocol itself is unencumbered by any patent or proprietary claim.
 

@@ -8,16 +8,16 @@ This document maps each [0DATA paper](https://0data.fr/paper/) to its correspond
 
 | Paper | Title | Theme | Status in SDK |
 |---|---|---|---|
-| 000 | La Loi | Theoretical foundation | [REF] Referenced (no code) |
-| 001 | La Discipline | Operational framework | [REF] Referenced (no code) |
-| 002 | Synthética | Synthetic digital life | [TODO] Not yet |
-| 003 | Le Système Nerveux | Nervous system for infrastructure | [DONE] **Core** — Synapse + Cockpit |
-| 004 | Greffe Numérique | Digital grafting | [WIP] Partially (passive mode) |
-| 005 | Le Système Immunitaire | Immune system | [DONE] **Core** — Cytokine + Anesthesia |
-| 006 | RESILIENCE | Self-healing infrastructure | [TODO] Not yet |
-| 007 | Convergence | Network convergence theory | [TODO] Not yet |
-| 008 | SPINA | Cryptographic spine | [DONE] **Core** — Chain + Merkle |
-| 009 | Symbiotic Internet | Symbiotic network vision | [TODO] Not yet |
+| 000 | La Loi | Theoretical foundation | 📖 Referenced (no code) |
+| 001 | La Discipline | Operational framework | 📖 Referenced (no code) |
+| 002 | Synthética | Synthetic digital life | ❌ Not yet |
+| 003 | Le Système Nerveux | Nervous system for infrastructure | ✅ **Core** — Synapse + Cockpit |
+| 004 | Greffe Numérique | Digital grafting | 🔶 Partially (passive mode) |
+| 005 | Le Système Immunitaire | Immune system | ✅ **Core** — Cytokine + Anesthesia |
+| 006 | RESILIENCE | Self-healing infrastructure | ❌ Not yet |
+| 007 | Convergence | Network convergence theory | ❌ Not yet |
+| 008 | SPINA | Cryptographic spine | ✅ **Core** — Chain + Merkle |
+| 009 | Symbiotic Internet | Symbiotic network vision | ❌ Not yet |
 
 ---
 
@@ -25,7 +25,7 @@ This document maps each [0DATA paper](https://0data.fr/paper/) to its correspond
 
 > *"The nervous system is the first organ. Before you can defend a body, you must feel it."*
 
-### Implemented [DONE]
+### Implemented ✅
 
 | Concept | Module | Location |
 |---|---|---|
@@ -41,7 +41,7 @@ This document maps each [0DATA paper](https://0data.fr/paper/) to its correspond
 | Molecular Cockpit (dashboard) | Cockpit | `nova_cockpit/dashboard.py` — port :8080 |
 | Real-time organ vitals | Cockpit | Canvas visualization |
 
-### NOT Yet Implemented [TODO]
+### NOT Yet Implemented ❌
 
 | Concept | Description | Priority |
 |---|---|---|
@@ -63,7 +63,7 @@ This document maps each [0DATA paper](https://0data.fr/paper/) to its correspond
 
 > *"The immune system does not know what is dangerous. It knows what is self."*
 
-### Implemented [DONE]
+### Implemented ✅
 
 | Concept | Module | Location |
 |---|---|---|
@@ -80,7 +80,7 @@ This document maps each [0DATA paper](https://0data.fr/paper/) to its correspond
 | REST API for alerts | Cytokine | `start_api()` — port :5190 |
 | Digital anesthesia (sandbox) | Cytokine | `AnesthesiaSandbox.isolate()`, `release()`, `report()` |
 
-### NOT Yet Implemented [TODO]
+### NOT Yet Implemented ❌
 
 | Concept | Description | Priority |
 |---|---|---|
@@ -106,7 +106,7 @@ This document maps each [0DATA paper](https://0data.fr/paper/) to its correspond
 
 > *"The spine remembers what the brain forgets."*
 
-### Implemented [DONE]
+### Implemented ✅
 
 | Concept | Module | Location |
 |---|---|---|
@@ -125,7 +125,7 @@ This document maps each [0DATA paper](https://0data.fr/paper/) to its correspond
 | REST API | SPINA Chain | `SpinaAPI.start()` — port :5194 |
 | PoA consensus (bootstrap) | SPINA Chain | `consensus = "PoA"` — validator signs blocks |
 
-### NOT Yet Implemented [TODO]
+### NOT Yet Implemented ❌
 
 | Concept | Description | Priority |
 |---|---|---|
@@ -149,14 +149,14 @@ This document maps each [0DATA paper](https://0data.fr/paper/) to its correspond
 
 ## Paper 004 — Greffe Numérique (Digital Graft)
 
-### Implemented [DONE]
+### Implemented ✅
 
 | Concept | Module | Location |
 |---|---|---|
 | Passive-only mode (no packet emission) | Synapse Engine | `start_passive()` — sniff only, no probes |
 | Graft metaphor | Architecture | The entire SDK is designed to attach without replacing |
 
-### NOT Yet Implemented [TODO]
+### NOT Yet Implemented ❌
 
 | Concept | Description | Priority |
 |---|---|---|
