@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA SDK — Digital Organism Toolkit</title>
+<meta name="description" content="NOVA SDK — Open-source digital organism toolkit. Passive network grafting, immune anomaly detection, blockchain memory, 3D cockpit.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/nova.css">
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#3a3440" stroke-width="1.5" stroke-linecap="round">
+      <circle cx="12" cy="12" r="10"/>
+      <circle cx="12" cy="12" r="4"/>
+      <line x1="12" y1="2" x2="12" y2="8"/>
+      <line x1="12" y1="16" x2="12" y2="22"/>
+      <line x1="2" y1="12" x2="8" y2="12"/>
+      <line x1="16" y1="12" x2="22" y2="12"/>
+    </svg>
+    NOVA SDK
+  </a>
+  <a href="#modules">Modules</a>
+  <a href="#install">Install</a>
+  <a href="#papers">Papers</a>
+  <a href="API.md">API</a>
+  <a href="ARCHITECTURE.md">Architecture</a>
+  <a href="https://github.com/ZERODATALAB/nova-sdk" class="github">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+    GitHub
+  </a>
+</nav>
+
+<section class="hero">
+  <div class="badge">Open Source · MIT</div>
+  <h1>Digital <span>Organism</span> Toolkit</h1>
+  <p class="tagline">Passive network grafting. Immune anomaly detection. Blockchain memory. 3D cockpit visualization. One organism, four systems.</p>
+  <div class="cta-group">
+    <a href="#install" class="cta cta-primary">Quick Start</a>
+    <a href="https://github.com/ZERODATALAB/nova-sdk" class="cta cta-ghost">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      GitHub
+    </a>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section id="modules">
+  <div class="container">
+    <div class="section-label">Architecture</div>
+    <h2 class="section-title">Four systems. One organism.</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-icon icon-mint">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8cc0a8" stroke-width="1.2" stroke-linecap="round">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="14" y2="12"/>
+            <circle cx="18" cy="12" r="2"/>
+          </svg>
+        </div>
+        <h3>SPINA</h3>
+        <p>Blockchain memory backbone. Every network event is hashed into an append-only, cryptographically verifiable chain. Replay the last hour, day, or month to trace exactly what changed.</p>
+        <p style="margin-top:6px"><code>from nova_spina.chain import SpinaChain</code></p>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-rose">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d4a0a0" stroke-width="1.2" stroke-linecap="round">
+            <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+            <path d="M12 6v12M6 12h12"/>
+            <circle cx="12" cy="12" r="2"/>
+          </svg>
+        </div>
+        <h3>Cytokine</h3>
+        <p>Digital immune system. Learns baseline behavior from passive observation and scores deviations. No rules, no thresholds, no signatures. Distinguishes legitimate topology changes from intrusion.</p>
+        <p style="margin-top:6px"><code>from nova_cytokine.engine import CytokineEngine</code></p>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-sky">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a0c0e0" stroke-width="1.2" stroke-linecap="round">
+            <circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/>
+            <circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/>
+            <line x1="8.5" y1="7.5" x2="15" y2="16"/><line x1="8.5" y1="16.5" x2="15" y2="8"/>
+          </svg>
+        </div>
+        <h3>Synapse</h3>
+        <p>Inter-agent connection mesh. Agents discover each other and share intelligence via lightweight pub/sub with cryptographic identity. One agent detects an anomaly &mdash; all agents are immunized.</p>
+        <p style="margin-top:6px"><code>from nova_synapse.mesh import SynapseMesh</code></p>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-lav">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a8a8d8" stroke-width="1.2" stroke-linecap="round">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <h3>Cockpit</h3>
+        <p>Real-time 3D organism visualization. Every device, link, and anomaly rendered as a living cell in a molecular network. Tilt, zoom, click to auscultate any node.</p>
+        <p style="margin-top:6px"><code>nova cockpit --port 8080</code></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSTALL -->
+<section id="install">
+  <div class="container">
+    <div class="section-label">Installation</div>
+    <h2 class="section-title">One command. Zero footprint.</h2>
+    <div class="arch-block">
+<pre><code>git clone https://github.com/ZERODATALAB/nova-sdk.git
+cd nova-sdk
+pip install -e .</code></pre>
+    </div>
+    <p style="color:var(--soft);font-size:.78rem;margin-top:8px">Requirements: Python 3.10+, Flask &ge;3.0, Scapy &ge;2.5, Cryptography &ge;41.0</p>
+
+    <h3 style="margin-top:36px;font-weight:600;font-size:.95rem">Quick Start</h3>
+    <div class="grid grid-2" style="margin-top:16px">
+      <div class="arch-block">
+        <h3>CLI</h3>
+<pre><code># Passive scan — zero packets sent
+nova scan --subnet 192.168.1.0/24
+
+# Immune engine — continuous watch
+nova immune --watch
+
+# 3D cockpit
+nova cockpit --port 8080</code></pre>
+      </div>
+      <div class="arch-block">
+        <h3>Python API</h3>
+<pre><code>from nova_spina.chain import SpinaChain
+from nova_cytokine.engine import CytokineEngine
+
+spina = SpinaChain()
+devices = spina.scan(subnet="192.168.1.0/24")
+
+cytokine = CytokineEngine()
+for d in devices:
+    score = cytokine.analyze(d)
+    if score > 0.8:
+        print(f"Anomaly: {d.name}")</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAPER MAP -->
+<section id="papers">
+  <div class="container">
+    <div class="section-label">Academic Foundation</div>
+    <h2 class="section-title">Code &harr; Papers</h2>
+    <p style="color:var(--soft);font-size:.82rem;margin-bottom:24px">Every SDK module is the executable companion to a peer-reviewed research paper. The papers describe the theory; the code is the proof of execution.</p>
+
+    <a href="https://0data.fr/paper/003" class="paper-row">
+      <div class="paper-num c-sky">003</div>
+      <div class="paper-info">
+        <div class="name">Spinal Memory</div>
+        <div class="desc">Append-Only Infrastructure Graph &mdash; cryptographically verifiable network event chain</div>
+      </div>
+      <div class="paper-module">nova_spina</div>
+    </a>
+    <a href="https://0data.fr/paper/004" class="paper-row">
+      <div class="paper-num c-rose">004</div>
+      <div class="paper-info">
+        <div class="name">Digital Immune System</div>
+        <div class="desc">Anomaly Detection Without Signatures &mdash; self/non-self discrimination for infrastructure</div>
+      </div>
+      <div class="paper-module">nova_cytokine</div>
+    </a>
+    <a href="https://0data.fr/paper/005" class="paper-row">
+      <div class="paper-num c-lav">005</div>
+      <div class="paper-info">
+        <div class="name">Synaptic Grafting</div>
+        <div class="desc">Inter-Agent Communication Protocol &mdash; cryptographic identity, pub/sub mesh, herd immunity</div>
+      </div>
+      <div class="paper-module">nova_synapse</div>
+    </a>
+    <a href="https://0data.fr/paper/006" class="paper-row">
+      <div class="paper-num c-mint">006</div>
+      <div class="paper-info">
+        <div class="name">3D Organism Visualization</div>
+        <div class="desc">Molecular cockpit &mdash; real-time rendering of network topology as living cellular structure</div>
+      </div>
+      <div class="paper-module">nova_cockpit</div>
+    </a>
+
+    <p style="margin-top:16px;font-size:.72rem;color:var(--muted)">
+      Full mapping: <a href="PAPER_MAP.md" style="color:var(--gold)">docs/PAPER_MAP.md</a>
+    </p>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section>
+  <div class="container">
+    <div class="section-label">Philosophy</div>
+    <h2 class="section-title">Graft, don't replace.</h2>
+    <div class="grid grid-3" style="margin-top:8px">
+      <div class="card">
+        <h3>Passive by default</h3>
+        <p>Zero packets sent during discovery. Like a physician who observes before intervening, NOVA listens first.</p>
+      </div>
+      <div class="card">
+        <h3>Immutable memory</h3>
+        <p>Blockchain-backed audit trail. Every event is cryptographically chained. The graph cannot be rewritten.</p>
+      </div>
+      <div class="card">
+        <h3>Open source</h3>
+        <p>MIT license. No strings attached. The organism is yours to study, modify, and deploy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  MIT &copy; <a href="https://0data.fr">0DATA Lab</a> &middot;
+  <a href="https://github.com/ZERODATALAB/nova-sdk">GitHub</a> &middot;
+  <a href="API.md">API</a> &middot;
+  <a href="ARCHITECTURE.md">Architecture</a> &middot;
+  <a href="PAPER_MAP.md">Paper Map</a>
+  <br>
+  <span style="font-size:.65rem">Part of the 0DATA ecosystem &mdash; Know &middot; Protect &middot; Remember</span>
+</footer>
+
+</body>
+</html>

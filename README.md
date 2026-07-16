@@ -1,6 +1,6 @@
-# 🧬 NOVA SDK
+# NOVA SDK
 
-**Greffe numérique. Organisme vivant.**
+**Digital Organism Toolkit. Graft, don't replace.**
 
 NOVA ne remplace pas votre infrastructure — elle s'y greffe. Comme un symbiote, elle observe passivement le réseau (SPINA), détecte les anomalies avant qu'elles ne deviennent des pannes (Cytokine), connecte les agents entre eux (Synapse), et grave chaque événement dans une mémoire immutable.
 
@@ -150,5 +150,6 @@ MIT © [0DATA Lab](https://0data.fr)
 ---
 
 <p align="center">
-  <sub>🧬 Part of the <a href="https://0data.fr">0DATA</a> ecosystem — Connaître · Protéger · Se Souvenir</sub>
+  <sub>Part of the <a href="https://0data.fr">0DATA</a> ecosystem — Know &middot; Protect &middot; Remember</sub><br>
+  <sub><a href="docs/">Documentation Site</a> with pastel glassmorphism design</sub>
 </p>

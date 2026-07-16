@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="35%">
+      <stop offset="0%" stop-color="#111a24"/>
+      <stop offset="100%" stop-color="#060a10"/>
+    </radialGradient>
+    <radialGradient id="orb" cx="50%" cy="45%">
+      <stop offset="0%" stop-color="#7eb8da" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="56" fill="url(#bg)"/>
+
+  <!-- Ambient glow -->
+  <circle cx="256" cy="200" r="240" fill="url(#orb)"/>
+
+  <!-- Orbital rings — thicker, more visible -->
+  <g fill="none">
+    <!-- Outer ring -->
+    <circle cx="256" cy="225" r="190" stroke="#7eb8da" stroke-width="1.8" opacity="0.25"/>
+    <!-- Mid rings -->
+    <circle cx="256" cy="225" r="175" stroke="#8cc9b8" stroke-width="1.2" opacity="0.18" stroke-dasharray="4 22"/>
+    <circle cx="256" cy="225" r="160" stroke="#7eb8da" stroke-width="0.8" opacity="0.14" stroke-dasharray="2 16"/>
+    <!-- Small accent ring -->
+    <circle cx="256" cy="225" r="145" stroke="#d4b896" stroke-width="0.6" opacity="0.10" stroke-dasharray="3 30"/>
+  </g>
+
+  <!-- Flask — thicker strokes for small-size visibility -->
+  <g transform="translate(256, 218)">
+    <!-- Flask body outline — 5px stroke, bold -->
+    <path d="
+      M-36,-82
+      L-36,-38
+      C-36,-18 -54,-2 -58,24
+      C-62,55 -58,85 -45,106
+      C-28,132 0,138 0,138
+      C0,138 28,132 45,106
+      C58,85 62,55 58,24
+      C54,-2 36,-18 36,-38
+      L36,-82
+      Z
+    " fill="#0c141c" stroke="#7eb8da" stroke-width="5" stroke-linejoin="round"/>
+
+    <!-- Flask neck rim -->
+    <rect x="-42" y="-90" width="84" height="16" rx="4" fill="#7eb8da" opacity="0.85"/>
+
+    <!-- Liquid — more visible -->
+    <path d="
+      M-47,106
+      C-28,134 0,136 0,136
+      C0,136 28,134 47,106
+      C53,88 52,65 47,50
+      C43,38 35,32 22,28
+      C10,24 -10,24 -22,28
+      C-35,32 -43,38 -47,50
+      C-52,65 -53,88 -47,106
+      Z
+    " fill="#7eb8da" opacity="0.22"/>
+
+    <!-- Bubbles — larger -->
+    <circle cx="0" cy="78" r="6" fill="#7eb8da" opacity="0.50"/>
+    <circle cx="-18" cy="96" r="5" fill="#8cc9b8" opacity="0.45"/>
+    <circle cx="16" cy="88" r="4" fill="#7eb8da" opacity="0.40"/>
+    <circle cx="-7" cy="110" r="3" fill="#d4b896" opacity="0.35"/>
+    <circle cx="10" cy="105" r="2.5" fill="#8cc9b8" opacity="0.30"/>
+    <circle cx="-25" cy="80" r="3.5" fill="#7eb8da" opacity="0.30"/>
+
+    <!-- Orbiting electron dots — larger -->
+    <circle cx="0" cy="-122" r="6" fill="#d4b896" opacity="0.80"/>
+    <circle cx="90" cy="-20" r="5" fill="#8cc9b8" opacity="0.70"/>
+    <circle cx="-85" cy="20" r="5.5" fill="#7eb8da" opacity="0.70"/>
+    <circle cx="68" cy="88" r="4.5" fill="#d4b896" opacity="0.60"/>
+    <circle cx="-70" cy="85" r="4" fill="#8cc9b8" opacity="0.55"/>
+    <circle cx="35" cy="-102" r="4" fill="#7eb8da" opacity="0.50"/>
+    <circle cx="-40" cy="-105" r="3.5" fill="#d4b896" opacity="0.45"/>
+  </g>
+
+  <!-- Corner marks -->
+  <g stroke="#7eb8da" stroke-width="1.5" opacity="0.10">
+    <path d="M 24 12 L 24 44 M 24 12 L 56 12"/>
+    <path d="M 488 12 L 488 44 M 488 12 L 456 12"/>
+    <path d="M 24 500 L 24 468 M 24 500 L 56 500"/>
+    <path d="M 488 500 L 488 468 M 488 500 L 456 500"/>
+  </g>
+
+  <!-- Text — bolder, more readable at small sizes -->
+  <text x="256" y="442" text-anchor="middle" font-family="'Inter', 'Helvetica Neue', Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="12" fill="#7eb8da" opacity="0.65">ZERODATA</text>
+  <text x="256" y="472" text-anchor="middle" font-family="'Inter', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="600" letter-spacing="10" fill="#d4b896" opacity="0.65">LAB</text>
+</svg>
