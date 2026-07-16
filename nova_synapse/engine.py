@@ -259,7 +259,7 @@ class SynapseEngine:
                     filter="ip",
                 )
             except PermissionError:
-                print("[NOVA] ⚠️  Root privileges required for packet capture.")
+                print("[NOVA] [!]  Root privileges required for packet capture.")
                 print("[NOVA] Run: sudo nova scan")
             except Exception as e:
                 print(f"[NOVA] Capture error: {e}")

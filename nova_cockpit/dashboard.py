@@ -79,7 +79,7 @@ async function fetchData(){
     const d=await r.json();
     document.getElementById('organs').textContent=d.organs;
     document.getElementById('synapses').textContent=d.synapses;
-    document.getElementById('baseline').textContent=d.baseline_ready?'✅ Ready':'⏳ Observing...';
+    document.getElementById('baseline').textContent=d.baseline_ready?'[OK] Ready':'⏳ Observing...';
     document.getElementById('baseline').style.color=d.baseline_ready?'#8cc9b8':'#d4b896';
     document.getElementById('uptime').innerHTML=Math.floor(d.uptime_seconds)+'<span class="unit">s</span>';
   }catch(e){}

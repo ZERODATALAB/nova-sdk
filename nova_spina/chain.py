@@ -26,7 +26,7 @@ try:
 except ImportError:
     HAS_CRYPTO = False
     # Pure Python fallback: Ed25519 via hashlib only (weaker, demo only)
-    print("[SPINA] ⚠️  'cryptography' not installed — using demo signatures only.")
+    print("[SPINA] [!]  'cryptography' not installed — using demo signatures only.")
     print("[SPINA] Install: pip install cryptography")
 
 try:

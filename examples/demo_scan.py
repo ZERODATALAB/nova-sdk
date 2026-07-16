@@ -89,7 +89,7 @@ def print_dependency_status(deps):
     print("=" * 60)
     all_ok = True
     for name, info in deps.items():
-        icon = "✅" if info["available"] else "⚠️ "
+        icon = "[OK]" if info["available"] else "[!] "
         print(f"  {icon} {name:<20s} {info['message']}")
         if not info["available"] and name == "nova-sdk":
             all_ok = False
@@ -133,12 +133,12 @@ def run_demo(interface=None, duration=30, data_dir="/tmp/nova-demo"):
         engine = SynapseEngine(data_dir=f"{data_dir}/synapse")
         chain = SpinaChain(data_dir=f"{data_dir}/spina")
 
-        print("  ✅ Synapse Engine   — initialized")
-        print("  ✅ SPINA Chain      — initialized")
-        print("  ✅ Cytokine Engine  — ready (will connect after scan)")
+        print("  [OK] Synapse Engine   — initialized")
+        print("  [OK] SPINA Chain      — initialized")
+        print("  [OK] Cytokine Engine  — ready (will connect after scan)")
         print()
     except Exception as e:
-        print(f"  ❌ Engine initialization failed: {e}")
+        print(f"  [KO] Engine initialization failed: {e}")
         print()
         print("  Make sure you've installed the SDK:")
         print("    pip install -e /opt/nova-sdk")
@@ -148,8 +148,8 @@ def run_demo(interface=None, duration=30, data_dir="/tmp/nova-demo"):
     print("─" * 60)
     print(f"  STEP 2: Passive network discovery ({duration}s)...")
     print("─" * 60)
-    print("  🔍 Listening passively — ZERO packets emitted.")
-    print("  📡 Detecting organs and forming synapses...")
+    print("  [SCAN] Listening passively — ZERO packets emitted.")
+    print("  [NET] Detecting organs and forming synapses...")
     print()
 
     try:
@@ -178,18 +178,18 @@ def run_demo(interface=None, duration=30, data_dir="/tmp/nova-demo"):
         time.sleep(1)
         print()
         print()
-        print(f"  ✅ Scan complete!")
+        print(f"  [OK] Scan complete!")
         print()
     except PermissionError:
         print()
-        print("  ❌ Permission denied!")
+        print("  [KO] Permission denied!")
         print()
         print("  Packet capture requires root privileges. Run with sudo:")
         print("    sudo python examples/demo_scan.py")
         sys.exit(1)
     except Exception as e:
         print()
-        print(f"  ❌ Scan failed: {e}")
+        print(f"  [KO] Scan failed: {e}")
         print()
         print("  Troubleshooting:")
         print("    - Try specifying an interface: --interface eth0")
@@ -203,7 +203,7 @@ def run_demo(interface=None, duration=30, data_dir="/tmp/nova-demo"):
     print("─" * 60)
 
     if not engine.organs:
-        print("  ⚠️  No organs discovered.")
+        print("  [!]  No organs discovered.")
         print()
         print("  This can happen if:")
         print("    - The network is very quiet (try a longer duration)")
@@ -257,7 +257,7 @@ def run_demo(interface=None, duration=30, data_dir="/tmp/nova-demo"):
     print(f"  Organs discovered:  {stats['organs_discovered']:>8d}")
     print(f"  Synapses formed:    {stats['synapses_formed']:>8d}")
     print(f"  Uptime:             {stats['uptime_seconds']:>8.0f}s")
-    print(f"  Baseline ready:     {'✅ Yes' if engine.baseline_ready else '⏳ No (requires 7 days)'}")
+    print(f"  Baseline ready:     {'[OK] Yes' if engine.baseline_ready else '⏳ No (requires 7 days)'}")
     print()
 
     # ── Step 6: Run Cytokine immune check ─────────────────────────
@@ -273,16 +273,16 @@ def run_demo(interface=None, duration=30, data_dir="/tmp/nova-demo"):
 
         if active_alerts:
             severity_icons = {
-                "info": "ℹ️ ",
-                "low": "🔵",
-                "medium": "🟡",
-                "high": "🟠",
-                "critical": "🔴",
+                "info": "ℹ ",
+                "low": "[LOW]",
+                "medium": "[MED]",
+                "high": "[HIGH]",
+                "critical": "[CRIT]",
             }
             print(f"  Active Alerts: {len(active_alerts)}")
             print()
             for alert in active_alerts:
-                icon = severity_icons.get(alert["severity"], "⚠️ ")
+                icon = severity_icons.get(alert["severity"], "[!] ")
                 print(f"  {icon} [{alert['severity'].upper():<8s}] {alert['message']}")
                 if alert.get("organ_ip"):
                     print(f"     Organ: {alert['organ_ip']} ({alert.get('organ_mac', '?')})")
@@ -292,7 +292,7 @@ def run_demo(interface=None, duration=30, data_dir="/tmp/nova-demo"):
                     print(f"     Evidence: {json.dumps(alert['evidence'])}")
                 print()
         else:
-            print("  ✅ No active alerts — infrastructure appears healthy.")
+            print("  [OK] No active alerts — infrastructure appears healthy.")
             print()
             print("  Note: This is expected during short demo scans.")
             print("  Alerts become more meaningful with a baseline (7 days).")
@@ -307,7 +307,7 @@ def run_demo(interface=None, duration=30, data_dir="/tmp/nova-demo"):
             print()
 
     except Exception as e:
-        print(f"  ❌ Immune check failed: {e}")
+        print(f"  [KO] Immune check failed: {e}")
         print()
 
     # ── Step 7: Add a block to SPINA ──────────────────────────────
@@ -350,7 +350,7 @@ def run_demo(interface=None, duration=30, data_dir="/tmp/nova-demo"):
             }
 
         block = chain.add_block(payload)
-        print(f"  ✅ Block added to SPINA chain!")
+        print(f"  [OK] Block added to SPINA chain!")
         print(f"     Block hash:  {block.block_hash[:32]}...")
         print(f"     Type:        {payload['type']}")
         print(f"     Chain length: {chain.length}")
@@ -367,13 +367,13 @@ def run_demo(interface=None, duration=30, data_dir="/tmp/nova-demo"):
         # Verify the block we just added
         verified = chain.verify_block(block.block_hash)
         if verified:
-            print(f"  ✅ Merkle proof verified — block integrity confirmed (O(log n)).")
+            print(f"  [OK] Merkle proof verified — block integrity confirmed (O(log n)).")
         else:
-            print(f"  ❌ Merkle proof FAILED — possible tampering detected!")
+            print(f"  [KO] Merkle proof FAILED — possible tampering detected!")
         print()
 
     except Exception as e:
-        print(f"  ❌ SPINA block creation failed: {e}")
+        print(f"  [KO] SPINA block creation failed: {e}")
         print()
 
     # ── Step 8: Show final summary ────────────────────────────────
@@ -417,7 +417,7 @@ def run_demo(interface=None, duration=30, data_dir="/tmp/nova-demo"):
     with open(results_file, "w") as f:
         json.dump(results, f, indent=2, default=str)
 
-    print(f"  📄 Full results saved to: {results_file}")
+    print(f"  [FILE] Full results saved to: {results_file}")
     print()
 
 
@@ -458,7 +458,7 @@ Examples:
     core_ok = print_dependency_status(deps)
 
     if not core_ok:
-        print("  ❌ Core dependency 'nova-sdk' is not installed.")
+        print("  [KO] Core dependency 'nova-sdk' is not installed.")
         print()
         print("  Install it with one of:")
         print("    pip install nova-sdk")
@@ -466,7 +466,7 @@ Examples:
         sys.exit(1)
 
     if not deps["scapy"]["available"]:
-        print("  ⚠️  scapy is required for packet capture but not installed.")
+        print("  [!]  scapy is required for packet capture but not installed.")
         print("  Install: pip install scapy")
         print()
         response = input("  Continue anyway? (will fail at scan step) [y/N]: ")
@@ -483,12 +483,12 @@ Examples:
         )
     except KeyboardInterrupt:
         print()
-        print("  ⚠️  Demo interrupted by user.")
+        print("  [!]  Demo interrupted by user.")
         print()
         sys.exit(0)
     except Exception as e:
         print()
-        print(f"  ❌ Unexpected error: {e}")
+        print(f"  [KO] Unexpected error: {e}")
         print()
         import traceback
         traceback.print_exc()
