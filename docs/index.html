@@ -116,7 +116,7 @@
 cd nova-sdk
 pip install -e .</code></pre>
     </div>
-    <p style="color:var(--soft);font-size:.78rem;margin-top:8px">Requirements: Python 3.10+, Flask &ge;3.0, Scapy &ge;2.5, Cryptography &ge;41.0</p>
+    <p style="color:var(--soft);font-size:.78rem;margin-top:8px">Requirements: Python 3.10+, Flask &ge;3.0, Scapy &ge;2.5, Cryptography &ge;41.0, NetworkX &ge;3.0</p>
 
     <h3 style="margin-top:36px;font-weight:600;font-size:.95rem">Quick Start</h3>
     <div class="grid grid-2" style="margin-top:16px">
@@ -135,15 +135,23 @@ nova cockpit --port 8080</code></pre>
         <h3>Python API</h3>
 <pre><code>from nova_spina.chain import SpinaChain
 from nova_cytokine.engine import CytokineEngine
+from nova_synapse.engine import SynapseEngine
+
+synapse = SynapseEngine()
+router = synapse.discover_organ(
+    "192.168.1.1", "aa:bb:cc:dd:ee:ff")
+webserver = synapse.discover_organ(
+    "192.168.1.10", "11:22:33:44:55:66")
+
+synapse.form_synapse(router, webserver, "TCP", 443)
 
 spina = SpinaChain()
-devices = spina.scan(subnet="192.168.1.0/24")
+spina.add_block({"scan": "complete"})
 
-cytokine = CytokineEngine()
-for d in devices:
-    score = cytokine.analyze(d)
-    if score > 0.8:
-        print(f"Anomaly: {d.name}")</code></pre>
+cytokine = CytokineEngine(synapse)
+alerts = cytokine.check()
+for a in alerts:
+    print(f"[!] {a.message}")</code></pre>
       </div>
     </div>
   </div>

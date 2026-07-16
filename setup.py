@@ -13,10 +13,11 @@ setup(
         "scapy>=2.5",
         "requests>=2.31",
         "cryptography>=41.0",
+        "networkx>=3.0",
     ],
     entry_points={
         "console_scripts": [
-            "nova=nova_cli:main",
+            "nova=cli.main:main",
         ],
     },
     python_requires=">=3.10",

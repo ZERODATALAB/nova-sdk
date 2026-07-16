@@ -204,10 +204,10 @@ class SpinaChain:
 
         return block
 
-    def get_block(self, block_hash: str) -> dict:
+    def get_block(self, target_hash: str) -> dict:
         """Retrieve a block by its hash."""
         for block in self.chain:
-            if block.block_hash == block_hash:
+            if block.block_hash == target_hash:
                 return block.to_dict()
         return None
 

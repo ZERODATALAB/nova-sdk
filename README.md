@@ -41,7 +41,7 @@ cd nova-sdk
 pip install -e .
 ```
 
-Requirements: Python 3.10+, Flask ≥3.0, Scapy ≥2.5, Cryptography ≥41.0
+Requirements: Python 3.10+, Flask ≥3.0, Scapy ≥2.5, Cryptography ≥41.0, NetworkX ≥3.0
 
 ---
 
@@ -63,19 +63,27 @@ Or programmatically:
 ```python
 from nova_spina.chain import SpinaChain
 from nova_cytokine.engine import CytokineEngine
+from nova_synapse.engine import SynapseEngine
 
-# Initialize the memory chain
+# Initialize the engines
+synapse = SynapseEngine()
 spina = SpinaChain()
 
-# Passive scan — reads ARP tables, DHCP leases, LLDP neighbors
-devices = spina.scan(subnet="192.168.1.0/24")
+# Discover organs (passive — reads ARP tables, DHCP leases, LLDP neighbors)
+router = synapse.discover_organ("192.168.1.1", "aa:bb:cc:dd:ee:ff", "gateway")
+webserver = synapse.discover_organ("192.168.1.10", "11:22:33:44:55:66", "web-01")
 
-# Run immune analysis
-cytokine = CytokineEngine()
-for device in devices:
-    score = cytokine.analyze(device)
-    if score > 0.8:
-        print(f"[!] Anomaly: {device.name} — score {score}")
+# Form synapses between organs
+synapse.form_synapse(router, webserver, "TCP", 443)
+
+# Record events in SPINA blockchain
+spina.add_block({"type": "scan", "organs_found": 2})
+
+# Run immune analysis (requires SynapseEngine)
+cytokine = CytokineEngine(synapse)
+alerts = cytokine.check()
+for alert in alerts:
+    print(f"[!] {alert.severity.name}: {alert.message}")
 ```
 
 ---
@@ -90,8 +98,8 @@ Every network event is hashed into a block, chained cryptographically. The chain
 from nova_spina.chain import SpinaChain
 
 chain = SpinaChain()
-chain.append({"event": "device_joined", "mac": "aa:bb:cc:dd:ee:ff"})
-chain.verify()  # True — the chain is intact
+chain.add_block({"event": "device_joined", "mac": "aa:bb:cc:dd:ee:ff"})
+chain.verify_block(chain.last_block["block_hash"])  # True — the chain is intact
 ```
 
 ### Cytokine — Immune System

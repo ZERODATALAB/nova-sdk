@@ -25,7 +25,7 @@ from nova_spina.chain import SpinaChain, get_chain
 def cmd_scan(args):
     """Start passive network discovery."""
     engine = get_engine()
-    print("[NOVA] [NOVA] Synapse Engine starting...")
+    print("[NOVA] Synapse Engine starting...")
     print("[NOVA] Passive network discovery — zero packets emitted.")
     print(f"[NOVA] Interface: {args.interface or 'auto-detect'}")
     print(f"[NOVA] Duration: {args.duration or 'indefinite (Ctrl+C to stop)'}")
@@ -59,7 +59,7 @@ def cmd_status(args):
     engine = get_engine()
     stats = engine.get_stats()
 
-    print("[NOVA] [NOVA] Infrastructure Status")
+    print("[NOVA] Infrastructure Status")
     print(f"  Uptime:      {stats['uptime_seconds']:.0f}s")
     print(f"  Organs:      {len(engine.organs)}")
     print(f"  Synapses:    {len(engine.synapses)}")
@@ -81,7 +81,7 @@ def cmd_status(args):
 def cmd_dashboard(args):
     """Start the web dashboard."""
     from nova_cockpit.dashboard import start_dashboard
-    print(f"[NOVA] [NOVA] Cockpit starting on http://localhost:{args.port}")
+    print(f"[NOVA] Cockpit starting on http://localhost:{args.port}")
     start_dashboard(port=args.port)
 
 
