@@ -171,6 +171,6 @@ def start_dashboard(host="0.0.0.0", port=8080):
     def _run():
         app.run(host=host, port=port, debug=False, use_reloader=False)
 
-    thread = threading.Thread(target=_run, daemon=True)
+    thread = threading.Thread(target=_run, daemon=False)
     thread.start()
     return True

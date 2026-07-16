@@ -126,7 +126,7 @@ def cmd_alerts(args):
 
     print(f"[NOVA] [DEF]  Active Alerts: {len(alerts)}")
     for a in alerts:
-        icon = {"info": "ℹ", "low": "[LOW]", "medium": "[MED]", "high": "[HIGH]", "critical": "[CRIT]"}.get(a["severity"], "[!]")
+        icon = {"info": "[INF]", "low": "[LOW]", "medium": "[MED]", "high": "[HIGH]", "critical": "[CRIT]"}.get(a["severity"], "[!]")
         print(f"  {icon} [{a['severity'].upper()}] {a['message']}")
         if a.get("organ_ip"):
             print(f"     Organ: {a['organ_ip']} ({a.get('organ_mac', '?')})")
