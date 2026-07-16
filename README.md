@@ -75,7 +75,7 @@ cytokine = CytokineEngine()
 for device in devices:
     score = cytokine.analyze(device)
     if score > 0.8:
-        print(f"⚠️  Anomaly: {device.name} — score {score}")
+        print(f"[!] Anomaly: {device.name} — score {score}")
 ```
 
 ---
