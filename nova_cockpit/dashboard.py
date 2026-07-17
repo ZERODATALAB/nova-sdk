@@ -315,8 +315,8 @@ COCKPIT_HTML = r"""<!DOCTYPE html>
 <script type="importmap">
 {
   "imports": {
-    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    "three": "/static/three.module.js",
+    "three/addons/": "/static/"
   }
 }
 </script>
@@ -607,6 +607,15 @@ def start_dashboard(host="0.0.0.0", port=8080, is_demo=False):
 
     app = Flask(__name__)
     scan_started_at = time.time() if is_demo else None
+
+    # Serve local Three.js static files (no CDN dependency)
+    import os as _os
+    _static_dir = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "static")
+
+    @app.route("/static/<path:filename>")
+    def static_files(filename):
+        from flask import send_from_directory
+        return send_from_directory(_static_dir, filename)
 
     @app.route("/")
     def index():
