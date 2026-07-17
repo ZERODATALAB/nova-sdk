@@ -181,7 +181,8 @@ COCKPIT_HTML = r"""<!DOCTYPE html>
   }
   @keyframes pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--mint); } 50% { opacity: 0.3; box-shadow: none; } }
   .toolbar span { font-size: 0.65rem; color: var(--muted); font-family: 'JetBrains Mono', 'Courier New', monospace; }
-  #three-container { flex: 1; cursor: grab; }
+  #three-container { flex: 1; cursor: grab; position: relative; }
+  #three-container canvas { display: block; width: 100%; height: 100%; }
   #three-container:active { cursor: grabbing; }
   /* Alerts footer */
   .alerts {
@@ -279,7 +280,7 @@ COCKPIT_HTML = r"""<!DOCTYPE html>
       <div class="pulse-dot" id="pulse-dot" style="background:#ffa94d;"></div>
       <span id="toolbar-status">DEMO MODE — simulation active</span>
     </div>
-    <div id="three-container"></div>
+    <div id="three-container"><canvas></canvas></div>
     <div id="loading"><div class="loading-text">Initializing molecular view...</div></div>
     <div class="alerts" id="alerts">
       <div class="alert-line info">[INFO] Demo mode — start a scan to discover your real infrastructure</div>
@@ -312,186 +313,169 @@ COCKPIT_HTML = r"""<!DOCTYPE html>
     {a:"10.0.0.10",b:"10.0.0.30",protocol:"TCP",port:445,weight:4.3}
   ];
 </script>
-<script type="importmap">
-{
-  "imports": {
-    "three": "/static/three.module.js",
-    "three/addons/": "/static/"
-  }
-}
-</script>
+<script>
 
-<script type="module">
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+// =============================================================================
+// NOVA Molecular Cockpit — Canvas 2D (zero dependencies, mobile-first)
+// =============================================================================
 
-// State
-let nodes3d = [], edgeLines = [];
-let useDemo = true;
-let scanStartTime = null;
-const PARTICLES = 150;
-
-// ─── Three.js setup ──────────────────────────────────────────────
 const container = document.getElementById('three-container');
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x060a10);
-scene.fog = new THREE.FogExp2(0x060a10, 0.00007);
+const canvas = document.querySelector('canvas');
+const ctx = canvas.getContext('2d');
 
-const camera = new THREE.PerspectiveCamera(50, container.clientWidth/container.clientHeight, 0.5, 200);
-camera.position.set(18, 12, 22);
-camera.lookAt(0, 0, 0);
+let nodes = [], edges = [];
+let useDemo = true;
 
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-renderer.setSize(container.clientWidth, container.clientHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.shadowMap.enabled = true;
-container.appendChild(renderer.domElement);
+// Camera
+let panX = 0, panY = 0, zoom = 0.8;
+let dragStart = null, isDragging = false;
 
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.08;
-controls.minDistance = 6;
-controls.maxDistance = 70;
-controls.autoRotate = true;
-controls.autoRotateSpeed = 0.3;
-controls.update();
+// Touch/mouse
+canvas.addEventListener('mousedown', e => { dragStart = {x: e.clientX, y: e.clientY}; isDragging = true; });
+canvas.addEventListener('touchstart', e => { const t = e.touches[0]; dragStart = {x: t.clientX, y: t.clientY}; isDragging = true; e.preventDefault(); }, {passive:false});
+window.addEventListener('mouseup', () => { isDragging = false; dragStart = null; });
+window.addEventListener('touchend', () => { isDragging = false; dragStart = null; });
+window.addEventListener('mousemove', e => { if(!isDragging||!dragStart) return; panX += e.clientX - dragStart.x; panY += e.clientY - dragStart.y; dragStart = {x: e.clientX, y: e.clientY}; });
+window.addEventListener('touchmove', e => { if(!isDragging||!dragStart) return; const t = e.touches[0]; panX += t.clientX - dragStart.x; panY += t.clientY - dragStart.y; dragStart = {x: t.clientX, y: t.clientY}; }, {passive:false});
+canvas.addEventListener('wheel', e => { zoom *= e.deltaY > 0 ? 0.92 : 1.08; zoom = Math.max(0.3, Math.min(3, zoom)); e.preventDefault(); }, {passive:false});
 
-// Lighting
-scene.add(new THREE.AmbientLight(0x1a2a3a, 1.8));
-const pl1 = new THREE.PointLight(0x7eb8da, 18, 60); pl1.position.set(15, 15, 15); scene.add(pl1);
-const pl2 = new THREE.PointLight(0xd4b896, 12, 50); pl2.position.set(-15, -5, -10); scene.add(pl2);
-
-// Subtle grid
-const grid = new THREE.PolarGridHelper(18, 32, 24, 128, 0x1a2a3a, 0x1a2a3a);
-grid.position.y = -10; scene.add(grid);
-
-// Ambient particles
-const pGeo = new THREE.BufferGeometry();
-const pPos = new Float32Array(PARTICLES * 3);
-for (let i = 0; i < PARTICLES * 3; i += 3) {
-  pPos[i] = (Math.random() - 0.5) * 40;
-  pPos[i+1] = (Math.random() - 0.5) * 25;
-  pPos[i+2] = (Math.random() - 0.5) * 30;
-}
-pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-const pMat = new THREE.PointsMaterial({ color: 0x7eb8da, size: 0.04, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending });
-const particles = new THREE.Points(pGeo, pMat); scene.add(particles);
-
-// Raycaster for hover
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
-const tooltip = document.getElementById('tooltip');
-
-// ─── Color palette ─────────────────────────────────────────────────
-const organColors = {
-  gateway:  0xd4b896, server: 0x7eb8da, database: 0x8cc9b8,
-  endpoint: 0xc0c8d4, iot: 0xffa94d, storage: 0xb39ddb, unknown: 0x6a7a8a,
+// Organ colors
+const COLORS = {
+  gateway: '#d4b896', server: '#7eb8da', database: '#8cc9b8',
+  endpoint: '#c0c8d4', iot: '#ffa94d', storage: '#b39ddb', unknown: '#6a7a8a'
 };
 
-function orgMat(color) { return new THREE.MeshStandardMaterial({ color, roughness:0.35, metalness:0.1, emissive:color, emissiveIntensity:0.15 }); }
-function glowMat(color) { return new THREE.MeshBasicMaterial({ color, transparent:true, opacity:0.07, blending:THREE.AdditiveBlending, depthWrite:false }); }
-function synMat() { return new THREE.MeshBasicMaterial({ color:0x7eb8da, transparent:true, opacity:0.16, blending:THREE.AdditiveBlending, depthWrite:false }); }
-
-// ─── Create organ node ──────────────────────────────────────────────
-function createOrganNode(organ, index, total) {
-  const g = new THREE.Group();
-  const color = organColors[organ.type] || organColors.unknown;
-  const phi = Math.acos(2 * (index/total) - 1);
-  const theta = Math.PI * (1 + Math.sqrt(5)) * index;
-  const r = 7 + Math.random() * 4;
-  const x = r * Math.sin(phi) * Math.cos(theta);
-  const y = r * Math.sin(phi) * Math.sin(theta);
-  const z = r * Math.cos(phi);
-
-  const sz = 0.45 + Math.random() * 0.65;
-
-  // Core sphere
-  const cell = new THREE.Mesh(new THREE.SphereGeometry(sz, 32, 32), orgMat(color));
-  cell.castShadow = cell.receiveShadow = true; g.add(cell);
-
-  // Nucleus
-  const nuc = new THREE.Mesh(new THREE.SphereGeometry(sz*0.4, 16, 16),
-    new THREE.MeshStandardMaterial({ color:0xffffff, roughness:0.2, emissive:color, emissiveIntensity:0.4 }));
-  g.add(nuc);
-
-  // Glow halo
-  const halo = new THREE.Mesh(new THREE.SphereGeometry(sz*1.9, 32, 32), glowMat(color)); g.add(halo);
-
-  // Membrane ring
-  const ringGeo = new THREE.TorusGeometry(sz*1.15, 0.04, 8, 32);
-  const ringMat = new THREE.MeshStandardMaterial({ color, roughness:0.2, emissive:color, emissiveIntensity:0.5 });
-  const ring1 = new THREE.Mesh(ringGeo, ringMat); ring1.rotation.x = Math.random()*Math.PI; ring1.rotation.y = Math.random()*Math.PI; g.add(ring1);
-  const ring2 = new THREE.Mesh(ringGeo, ringMat.clone()); ring2.rotation.x = Math.random()*Math.PI; ring2.rotation.y = Math.random()*Math.PI;
-  ring2.material.emissiveIntensity = 0.3; g.add(ring2);
-
-  g.position.set(x, y, z);
-  g.userData = { organ, color, sz, nuc, halo, ring1, ring2, baseY: y, phase: Math.random()*Math.PI*2 };
-  scene.add(g);
-  return g;
-}
-
-// ─── Create synapse edge ────────────────────────────────────────────
-function createSynapseEdge(nodeA, nodeB, weight) {
-  const g = new THREE.Group();
-  const start = nodeA.position.clone(), end = nodeB.position.clone();
-  const mid = start.clone().add(end).multiplyScalar(0.5);
-  mid.y += start.distanceTo(end) * 0.35 * (Math.random() > 0.5 ? 1 : -1);
-
-  const curve = new THREE.QuadraticBezierCurve3(start, mid, end);
-  const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 24, 0.025+weight*0.012, 8, false), synMat());
-  g.add(tube);
-
-  const pulse = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8),
-    new THREE.MeshBasicMaterial({ color:0x8cc9b8, transparent:true, opacity:0.8, blending:THREE.AdditiveBlending, depthWrite:false }));
-  pulse.position.copy(start); g.add(pulse);
-
-  g.userData = { curve, tube, pulse, nodeA, nodeB, start, end, mid, progress: Math.random(), speed: 0.002+weight*0.0007 };
-  scene.add(g);
-  return g;
-}
-
-// ─── Build graph ────────────────────────────────────────────────────
-function buildGraph(organsData, synapsesData) {
-  nodes3d.forEach(n => scene.remove(n)); edgeLines.forEach(e => scene.remove(e));
-  nodes3d = []; edgeLines = [];
-  const total = organsData.length || 1;
-  organsData.forEach((o, i) => nodes3d.push(createOrganNode(o, i, total)));
-  synapsesData.forEach(syn => {
-    const a = nodes3d.find(n => n.userData.organ.ip === syn.a);
-    const b = nodes3d.find(n => n.userData.organ.ip === syn.b);
-    if (a && b) edgeLines.push(createSynapseEdge(a, b, syn.weight||3));
+// Build from data
+function buildGraph(organs, synapses) {
+  nodes = organs.map((o, i) => {
+    const phi = Math.acos(2*(i/organs.length)-1);
+    const theta = Math.PI*(1+Math.sqrt(5))*i;
+    const r = 300 * zoom;
+    return {
+      ...o,
+      x: r*Math.sin(phi)*Math.cos(theta), y: r*Math.sin(phi)*Math.sin(theta),
+      color: COLORS[o.type] || COLORS.unknown,
+      size: 20 + Math.random()*25,
+      phase: Math.random()*Math.PI*2,
+      pulse: 0
+    };
   });
+  edges = synapses.map(s => {
+    const a = nodes.find(n => n.ip===s.a), b = nodes.find(n => n.ip===s.b);
+    return a && b ? {a, b, weight: s.weight||3, protocol: s.protocol, progress: Math.random()} : null;
+  }).filter(Boolean);
 }
 
-// ─── Fetch + UI update ──────────────────────────────────────────────
+// Draw
+function draw(t) {
+  const W = canvas.width, H = canvas.height, cx = W/2+panX, cy = H/2+panY;
+
+  // Background
+  ctx.fillStyle = '#060a10'; ctx.fillRect(0,0,W,H);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(26,42,58,0.3)';
+  for(let i=-400;i<=400;i+=80) {
+    const y = cy + i*zoom;
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+    const x = cx + i*zoom;
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
+  }
+
+  // Edges (synapses)
+  edges.forEach(e => {
+    const ax = cx+e.a.x*zoom, ay = cy+e.a.y*zoom;
+    const bx = cx+e.b.x*zoom, by = cy+e.b.y*zoom;
+    const mx = (ax+bx)/2, my = (ay+by)/2 - 30*zoom;
+
+    // Curve
+    ctx.beginPath(); ctx.moveTo(ax, ay);
+    ctx.quadraticCurveTo(mx, my, bx, by);
+    ctx.strokeStyle = `rgba(126,184,218,${0.08+e.weight*0.02})`;
+    ctx.lineWidth = Math.max(0.5, e.weight*0.4);
+    ctx.stroke();
+
+    // Pulse
+    e.progress += 0.003 + e.weight*0.0008;
+    if(e.progress > 1) e.progress = 0;
+    const pt = e.progress;
+    const px = (1-pt)*(1-pt)*ax + 2*(1-pt)*pt*mx + pt*pt*bx;
+    const py = (1-pt)*(1-pt)*ay + 2*(1-pt)*pt*my + pt*pt*by;
+    ctx.beginPath(); ctx.arc(px, py, 2.5, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(140,201,184,${0.3+Math.sin(pt*Math.PI)*0.7})`;
+    ctx.fill();
+  });
+
+  // Nodes (organs)
+  nodes.forEach(n => {
+    const x = cx+n.x*zoom, y = cy+n.y*zoom;
+    const breathe = 1+Math.sin(t*0.02+n.phase)*0.06;
+
+    // Halo
+    const haloR = n.size*breathe*2.2;
+    const haloGrd = ctx.createRadialGradient(x,y,n.size*0.8, x,y,haloR);
+    haloGrd.addColorStop(0, n.color+'30');
+    haloGrd.addColorStop(1, 'transparent');
+    ctx.beginPath(); ctx.arc(x,y,haloR,0,Math.PI*2);
+    ctx.fillStyle = haloGrd; ctx.fill();
+
+    // Cell body
+    const bodyGrd = ctx.createRadialGradient(x-n.size*0.2, y-n.size*0.2, n.size*0.1, x,y,n.size*breathe);
+    bodyGrd.addColorStop(0, n.color+'dd');
+    bodyGrd.addColorStop(0.7, n.color+'88');
+    bodyGrd.addColorStop(1, n.color+'20');
+    ctx.beginPath(); ctx.arc(x,y,n.size*breathe,0,Math.PI*2);
+    ctx.fillStyle = bodyGrd; ctx.fill();
+    ctx.strokeStyle = n.color+'66';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Ring
+    ctx.beginPath(); ctx.arc(x,y,n.size*breathe*1.25,0,Math.PI*2);
+    ctx.strokeStyle = n.color+'40';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Nucleus
+    ctx.beginPath(); ctx.arc(x,y,n.size*0.35,0,Math.PI*2);
+    ctx.fillStyle = '#ffffffdd';
+    ctx.fill();
+
+    // Label
+    ctx.font = '9px "JetBrains Mono", monospace';
+    ctx.fillStyle = '#c0c8d488';
+    ctx.fillText(n.ip||n.hostname||'', x-n.size, y-n.size*breathe-8);
+  });
+
+  // Auto-rotate (slow drift when not dragging)
+  if(!isDragging) panX -= 0.15;
+}
+
+// Fetch data
 async function fetchData() {
   try {
-    const r = await fetch('/api/graph'); const d = await r.json();
-    const organs = d.organs || [], synapses = d.synapses || [];
+    const r = await fetch('/api/graph');
+    const d = await r.json();
+    const organs = d.organs||[], synapses = d.synapses||[];
     const isDemo = d.demo === true;
 
-    if (isDemo || organs.length === 0) {
-      if (!useDemo || nodes3d.length !== DEMO_ORGANS.length) {
-        useDemo = true; buildGraph(DEMO_ORGANS, DEMO_SYNAPSES);
-      }
+    if(isDemo || organs.length===0) {
+      if(!useDemo||nodes.length!==DEMO_ORGANS.length) { useDemo=true; buildGraph(DEMO_ORGANS, DEMO_SYNAPSES); }
     } else {
       useDemo = false;
-      if (nodes3d.length !== organs.length) buildGraph(organs, synapses);
+      if(nodes.length !== organs.length) buildGraph(organs, synapses);
     }
 
     const h = await fetch('/api/health'); const hd = await h.json();
     updateUI({
-      organs: isDemo ? DEMO_ORGANS.length : (hd.organs || organs.length),
-      synapses: isDemo ? DEMO_SYNAPSES.length : (hd.synapses || synapses.length),
-      packets: hd.packets_seen || 0,
-      baseline: hd.baseline_ready,
-      uptime: hd.uptime_seconds || 0,
-      demo: isDemo,
-      scan_remaining: hd.scan_remaining,
-      at_limit: hd.at_organ_limit || false,
+      organs: isDemo?DEMO_ORGANS.length:(hd.organs||organs.length),
+      synapses: isDemo?DEMO_SYNAPSES.length:(hd.synapses||synapses.length),
+      packets: hd.packets_seen||0, baseline: hd.baseline_ready,
+      uptime: hd.uptime_seconds||0, demo: isDemo,
+      scan_remaining: hd.scan_remaining, at_limit: hd.at_organ_limit||false
     });
   } catch(e) {
-    if (nodes3d.length === 0) { useDemo = true; buildGraph(DEMO_ORGANS, DEMO_SYNAPSES); }
+    if(nodes.length===0) { useDemo=true; buildGraph(DEMO_ORGANS, DEMO_SYNAPSES); }
   }
 }
 
@@ -499,94 +483,44 @@ function updateUI(d) {
   document.getElementById('stat-organs').textContent = d.organs;
   document.getElementById('stat-synapses').textContent = d.synapses;
   document.getElementById('stat-packets').textContent = d.packets.toLocaleString();
-  document.getElementById('stat-baseline').textContent = d.baseline ? 'Baseline Ready' : 'Observing...';
-  document.getElementById('stat-baseline').style.color = d.baseline ? '#8cc9b8' : '#d4b896';
-
-  // Scan time
-  if (d.scan_remaining !== undefined && d.scan_remaining !== null) {
-    const mins = Math.floor(d.scan_remaining/60), secs = Math.floor(d.scan_remaining%60);
-    document.getElementById('stat-time').innerHTML = `${mins}m ${secs}s`;
-    document.getElementById('lock-time').classList.toggle('visible', true);
-  } else if (d.demo) {
-    document.getElementById('stat-time').textContent = '--';
-    document.getElementById('lock-time').classList.toggle('visible', true);
+  document.getElementById('stat-baseline').textContent = d.baseline?'Baseline Ready':'Observing...';
+  document.getElementById('stat-baseline').style.color = d.baseline?'#8cc9b8':'#d4b896';
+  if(d.scan_remaining!==undefined&&d.scan_remaining!==null) {
+    const m=Math.floor(d.scan_remaining/60), s=Math.floor(d.scan_remaining%60);
+    document.getElementById('stat-time').innerHTML = `${m}m ${s}s`;
+    document.getElementById('lock-time').classList.add('visible');
   }
-
-  // Organ limit warning
   document.getElementById('lock-organs').classList.toggle('visible', d.at_limit);
-
-  // Mode
   const badge = document.getElementById('mode-badge');
-  badge.textContent = d.demo ? 'DEMO' : 'LIVE';
-  badge.className = d.demo ? 'mode-badge demo' : 'mode-badge live';
-  document.getElementById('pulse-dot').style.background = d.demo ? '#ffa94d' : '#8cc9b8';
-  document.getElementById('toolbar-status').textContent = d.demo ? 'DEMO MODE — simulation active' : 'LIVE — passive scan engaged';
-
+  badge.textContent = d.demo?'DEMO':'LIVE';
+  badge.className = d.demo?'mode-badge demo':'mode-badge live';
+  document.getElementById('pulse-dot').style.background = d.demo?'#ffa94d':'#8cc9b8';
+  document.getElementById('toolbar-status').textContent = d.demo?'DEMO MODE — simulation active':'LIVE — passive scan engaged';
   document.getElementById('alerts').innerHTML = d.demo
-    ? '<div class="alert-line info">[INFO] Demo mode — real data replaces simulation after scan starts</div>'
-    : '<div class="alert-line info">[INFO] Passive scan active — zero packets emitted</div>';
+    ?'<div class="alert-line info">[INFO] Demo mode — real data replaces simulation after scan starts</div>'
+    :'<div class="alert-line info">[INFO] Passive scan active — zero packets emitted</div>';
 }
 
-// ─── Render loop ────────────────────────────────────────────────────
-const clock = new THREE.Clock();
-function animate() {
-  requestAnimationFrame(animate);
-  const t = clock.getElapsedTime();
-  controls.update();
+// Resize canvas
+function resize() {
+  canvas.width = container.clientWidth;
+  canvas.height = container.clientHeight;
+}
+window.addEventListener('resize', resize);
+resize();
 
-  nodes3d.forEach(n => {
-    const u = n.userData;
-    u.halo.scale.setScalar(1 + Math.sin(t*1.5+u.phase)*0.04);
-    u.ring1.rotation.z += 0.003; u.ring2.rotation.x += 0.004;
-    u.nuc.material.emissiveIntensity = 0.3 + Math.sin(t*3+u.phase)*0.2;
-    n.position.y = u.baseY + Math.sin(t*0.8+u.phase)*0.15;
-  });
-
-  edgeLines.forEach(e => {
-    const u = e.userData;
-    u.progress += u.speed; if (u.progress > 1) u.progress = 0;
-    const pt = u.curve.getPoint(u.progress);
-    u.pulse.position.copy(pt);
-    u.pulse.material.opacity = 0.25 + Math.sin(u.progress*Math.PI)*0.75;
-  });
-
-  particles.rotation.y += 0.0002; particles.rotation.x += 0.0001;
-  renderer.render(scene, camera);
+// Animate
+function anim(ts) {
+  draw(ts);
+  requestAnimationFrame(anim);
 }
 
-// ─── Hover ──────────────────────────────────────────────────────────
-container.addEventListener('mousemove', (e) => {
-  const rect = container.getBoundingClientRect();
-  mouse.x = ((e.clientX-rect.left)/rect.width)*2-1;
-  mouse.y = -((e.clientY-rect.top)/rect.height)*2+1;
-  raycaster.setFromCamera(mouse, camera);
-  const hits = raycaster.intersectObjects(nodes3d.flatMap(n=>n.children), true);
-  if (hits.length > 0) {
-    let obj = hits[0].object;
-    while (obj && !obj.userData?.organ) obj = obj.parent;
-    if (obj?.userData?.organ) {
-      const o = obj.userData.organ;
-      tooltip.innerHTML = `<div class="tt-ip">${o.ip}</div><div class="tt-host">${o.hostname||'(unnamed)'}</div><div class="tt-dna">DNA: ${o.dna}</div>`;
-      tooltip.style.display = 'block';
-      tooltip.style.left = (e.clientX-container.getBoundingClientRect().left+16)+'px';
-      tooltip.style.top = (e.clientY-container.getBoundingClientRect().top-50)+'px';
-      container.style.cursor = 'pointer';
-    }
-  } else { tooltip.style.display = 'none'; container.style.cursor = 'grab'; }
-});
-
-window.addEventListener('resize', () => {
-  camera.aspect = container.clientWidth/container.clientHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(container.clientWidth, container.clientHeight);
-});
-
-// ─── Init ───────────────────────────────────────────────────────────
+// Init
 function init() {
   buildGraph(DEMO_ORGANS, DEMO_SYNAPSES);
-  updateUI({ organs: DEMO_ORGANS.length, synapses: DEMO_SYNAPSES.length, packets: 0, baseline: false, uptime: 0, demo: true, scan_remaining: 300 });
+  updateUI({organs:DEMO_ORGANS.length, synapses:DEMO_SYNAPSES.length, packets:0, baseline:false, uptime:0, demo:true, scan_remaining:300});
   document.getElementById('loading').style.display = 'none';
-  animate();
+  requestAnimationFrame(anim);
   fetchData();
   setInterval(fetchData, 4000);
 }
