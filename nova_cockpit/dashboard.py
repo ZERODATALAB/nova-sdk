@@ -288,6 +288,30 @@ COCKPIT_HTML = r"""<!DOCTYPE html>
   </div>
 </div>
 
+<script>
+  // Demo data — shown immediately before real scan populates
+  const DEMO_ORGANS = [
+    {ip:"10.0.0.1",mac:"aa:bb:cc:dd:ee:01",hostname:"core-router",dna:"d3adf00d00000001",type:"gateway"},
+    {ip:"10.0.0.10",mac:"aa:bb:cc:dd:ee:02",hostname:"web-01",dna:"c0ffee0000000002",type:"server"},
+    {ip:"10.0.0.11",mac:"aa:bb:cc:dd:ee:03",hostname:"db-01",dna:"b00b1e0000000003",type:"database"},
+    {ip:"10.0.0.20",mac:"aa:bb:cc:dd:ee:04",hostname:"workstation-04",dna:"f00dface00000004",type:"endpoint"},
+    {ip:"10.0.0.21",mac:"aa:bb:cc:dd:ee:05",hostname:"printer-01",dna:"deadbeef00000005",type:"iot"},
+    {ip:"10.0.0.30",mac:"aa:bb:cc:dd:ee:06",hostname:"nas-storage",dna:"facade0000000006",type:"storage"},
+    {ip:"10.0.0.40",mac:"aa:bb:cc:dd:ee:07",hostname:"camera-garage",dna:"a1b2c3d400000007",type:"iot"},
+    {ip:"10.0.0.50",mac:"aa:bb:cc:dd:ee:08",hostname:"tv-living",dna:"e5f6a7b800000008",type:"iot"}
+  ];
+  const DEMO_SYNAPSES = [
+    {a:"10.0.0.1",b:"10.0.0.10",protocol:"TCP",port:443,weight:8.5},
+    {a:"10.0.0.1",b:"10.0.0.11",protocol:"TCP",port:5432,weight:6.2},
+    {a:"10.0.0.10",b:"10.0.0.11",protocol:"TCP",port:5432,weight:9.1},
+    {a:"10.0.0.1",b:"10.0.0.20",protocol:"TCP",port:443,weight:3.7},
+    {a:"10.0.0.1",b:"10.0.0.21",protocol:"UDP",port:631,weight:1.5},
+    {a:"10.0.0.1",b:"10.0.0.30",protocol:"TCP",port:445,weight:5.0},
+    {a:"10.0.0.1",b:"10.0.0.40",protocol:"TCP",port:554,weight:2.1},
+    {a:"10.0.0.1",b:"10.0.0.50",protocol:"UDP",port:1900,weight:0.8},
+    {a:"10.0.0.10",b:"10.0.0.30",protocol:"TCP",port:445,weight:4.3}
+  ];
+</script>
 <script type="importmap">
 {
   "imports": {
