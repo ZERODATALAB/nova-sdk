@@ -3,6 +3,7 @@
 NOVA CLI — Digital Organism Command Line Interface.
 
 Usage:
+    nova demo              One command: cockpit + live scan + immune engine
     nova scan              Start passive network discovery
     nova status            Show current topology and stats
     nova dashboard         Start web dashboard (port :8080)
@@ -85,6 +86,62 @@ def cmd_dashboard(args):
     start_dashboard(port=args.port)
 
 
+def cmd_demo(args):
+    """One-command experience: cockpit + live scan + immune engine."""
+    import threading
+    from nova_cockpit.dashboard import start_dashboard
+
+    engine = get_engine()
+    cyto = CytokineEngine(engine)
+
+    # Start passive scan in background
+    def _scan():
+        try:
+            engine.start_passive(interface=args.interface, duration=None)
+        except Exception as e:
+            print(f"[NOVA] Scan warning: {e}")
+
+    scan_thread = threading.Thread(target=_scan, daemon=True)
+    scan_thread.start()
+
+    # Start cockpit
+    print()
+    print("  ======================================================")
+    print("            NOVA — Digital Organism SDK")
+    print("          Molecular Cockpit + Live Scan")
+    print("  ======================================================")
+    print(f"  Cockpit  ->  http://localhost:{args.port}")
+    print(f"  API      ->  http://localhost:{args.port}/api/health")
+    print(f"  Graph    ->  http://localhost:{args.port}/api/graph")
+    print("  ------------------------------------------------------")
+    print("  DEMO MODE — full visuals, capped features")
+    print("  5 min scan limit | 10 organ max | Hebbian frozen")
+    print("  Upgrade: https://0data.fr/products/nova")
+    print("  ======================================================")
+    print("  [Ctrl+C] to stop")
+    print()
+
+    start_dashboard(port=args.port, is_demo=True)
+
+    # Keep alive
+    try:
+        import signal
+        import sys as _sys
+        stop_event = threading.Event()
+        def _handler(sig, frame):
+            print("\n[NOVA] Shutting down...")
+            engine.stop()
+            stop_event.set()
+            _sys.exit(0)
+        signal.signal(signal.SIGINT, _handler)
+        signal.signal(signal.SIGTERM, _handler)
+        while not stop_event.is_set():
+            stop_event.wait(1)
+    except KeyboardInterrupt:
+        print("\n[NOVA] Stopped.")
+        engine.stop()
+
+
 def cmd_spina(args):
     """SPINA blockchain operations."""
     chain = get_chain()
@@ -145,6 +202,11 @@ def main():
     p_scan.add_argument("-i", "--interface", help="Network interface")
     p_scan.add_argument("-d", "--duration", type=int, help="Scan duration (seconds)")
 
+    # nova demo — one-command experience
+    p_demo = sub.add_parser("demo", help="One command: cockpit + live scan + immune")
+    p_demo.add_argument("-i", "--interface", help="Network interface")
+    p_demo.add_argument("-p", "--port", type=int, default=8080, help="Cockpit port (default: 8080)")
+
     # nova status
     p_status = sub.add_parser("status", help="Show topology")
     p_status.add_argument("-v", "--verbose", action="store_true", help="Show all organs/synapses")
@@ -175,6 +237,7 @@ def main():
     args = parser.parse_args()
 
     commands = {
+        "demo": cmd_demo,
         "scan": cmd_scan,
         "status": cmd_status,
         "dashboard": cmd_dashboard,

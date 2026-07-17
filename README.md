@@ -2,7 +2,7 @@
 
 **Digital Organism Toolkit. Graft, don't replace.**
 
-NOVA ne remplace pas votre infrastructure — elle s'y greffe. Comme un symbiote, elle observe passivement le réseau (SPINA), détecte les anomalies avant qu'elles ne deviennent des pannes (Cytokine), connecte les agents entre eux (Synapse), et grave chaque événement dans une mémoire immutable.
+NOVA ne remplace pas votre infrastructure — elle s'y greffe. Comme un symbiote, elle observe passivement le reseau (SPINA), detecte les anomalies avant qu'elles ne deviennent des pannes (Cytokine), connecte les agents entre eux (Synapse), et visualise l'ensemble comme un organisme vivant en 3D (Cockpit).
 
 > *"The void is an invitation. Presence is immunity."* — NOVA, Paper 005
 
@@ -12,152 +12,125 @@ NOVA ne remplace pas votre infrastructure — elle s'y greffe. Comme un symbiote
 
 ---
 
-## Architecture
-
-```
-┌──────────────────────────────────────────┐
-│                 NOVA SDK                  │
-├──────────┬──────────┬──────────┬─────────┤
-│  SPINA   │ CYTOKINE │ SYNAPSE  │ COCKPIT │
-│  Mémoire │ Immunité │ Connexion│  Vue 3D │
-│ Blockchain│Anomalies │ Inter-agents│       │
-└──────────┴──────────┴──────────┴─────────┘
-```
-
-| Module | Rôle | Inspiration biologique |
-|--------|------|----------------------|
-| **SPINA** | Mémoire blockchain du réseau | Moelle épinière — colonne vertébrale de l'information |
-| **Cytokine** | Détection d'anomalies, scoring | Système immunitaire — reconnaît le soi du non-soi |
-| **Synapse** | Connexion inter-agents, dispatch | Jonction synaptique — transmission de signal |
-| **Cockpit** | Visualisation 3D temps réel | Cortex visuel — représentation de l'état |
-
----
-
-## Installation
+## Quick Start
 
 ```bash
 git clone https://github.com/ZERODATALAB/nova-sdk.git
 cd nova-sdk
 pip install -e .
+nova demo
 ```
 
-Requirements: Python 3.10+, Flask ≥3.0, Scapy ≥2.5, Cryptography ≥41.0, NetworkX ≥3.0
+Open **http://localhost:8080** — the molecular cockpit appears instantly with demo data. Passive scan starts in background, replacing simulated organs with real ones as they are discovered.
+
+**One command. Zero configuration. Works immediately.**
 
 ---
 
-## Quick Start
+## Architecture
+
+```
+                    NOVA SDK
+   +----------+----------+----------+----------+
+   |  SPINA   | CYTOKINE | SYNAPSE  | COCKPIT  |
+   |  Memoire | Immunite | Connexion|  Vue 3D  |
+   | Blockchain|Anomalies| Inter-agents| Moleculaire|
+   +----------+----------+----------+----------+
+```
+
+| Module | Role | Biological Inspiration |
+|--------|------|----------------------|
+| **SPINA** | Immutable blockchain memory of the network | Spinal cord — information backbone |
+| **Cytokine** | Anomaly detection, immune scoring | Immune system — self/non-self recognition |
+| **Synapse** | Inter-agent connection, topology discovery | Synaptic junction — signal transmission |
+| **Cockpit** | Real-time 3D molecular visualization | Visual cortex — state representation |
+
+---
+
+## Demo vs Commercial
+
+The demo (`nova demo`) includes the **full visual experience** — 3D molecular cockpit, live passive scanning, animated synapses, breathing cell nodes. It is functionally identical to the commercial version with these limits:
+
+| Feature | Demo | Commercial |
+|---------|------|------------|
+| 3D Molecular Cockpit | Full | Full |
+| Passive Scan Duration | 5 minutes | Unlimited |
+| Max Organs Tracked | 10 | Unlimited |
+| SPINA Blockchain | Read-only | Read/Write |
+| Cytokine Alerts | 3 rules | Full rule engine |
+| Synapse Weight Learning | Frozen | Hebbian (live) |
+| Data Export (JSON/CSV) | --- | Included |
+| Multi-Instance Sync | --- | Included |
+| REST API | Local only | Network + Auth |
+
+To license: https://0data.fr/products/nova
+
+---
+
+## Commands
 
 ```bash
-# Passive network scan — no packets sent, zero footprint
-nova scan --subnet 192.168.1.0/24
-
-# Start the immune engine on discovered hosts
-nova immune --watch
-
-# Launch the 3D cockpit
-nova cockpit --port 8080
-```
-
-Or programmatically:
-
-```python
-from nova_spina.chain import SpinaChain
-from nova_cytokine.engine import CytokineEngine
-from nova_synapse.engine import SynapseEngine
-
-# Initialize the engines
-synapse = SynapseEngine()
-spina = SpinaChain()
-
-# Discover organs (passive — reads ARP tables, DHCP leases, LLDP neighbors)
-router = synapse.discover_organ("192.168.1.1", "aa:bb:cc:dd:ee:ff", "gateway")
-webserver = synapse.discover_organ("192.168.1.10", "11:22:33:44:55:66", "web-01")
-
-# Form synapses between organs
-synapse.form_synapse(router, webserver, "TCP", 443)
-
-# Record events in SPINA blockchain
-spina.add_block({"type": "scan", "organs_found": 2})
-
-# Run immune analysis (requires SynapseEngine)
-cytokine = CytokineEngine(synapse)
-alerts = cytokine.check()
-for alert in alerts:
-    print(f"[!] {alert.severity.name}: {alert.message}")
+nova demo                  # Cockpit + live scan (one command)
+nova scan                  # Passive network discovery
+nova status -v             # Full topology report
+nova dashboard             # Cockpit only (no scan)
+nova spina add|search|list # SPINA blockchain
+nova alerts                # Active immune alerts
 ```
 
 ---
 
-## Deep Dive
-
-### SPINA — Blockchain Memory
-
-Every network event is hashed into a block, chained cryptographically. The chain is append-only, immutable, and verifiable. SPINA builds a temporal graph of your infrastructure — you can replay the last hour, day, or month to understand exactly what changed.
+## Python API
 
 ```python
+from nova_synapse.engine import SynapseEngine
+from nova_cytokine.engine import CytokineEngine
 from nova_spina.chain import SpinaChain
+from nova_cockpit.dashboard import start_dashboard
 
+# Discovery (passive — zero packets emitted)
+engine = SynapseEngine()
+engine.start_passive()           # background scan
+
+# Immune analysis
+cyto = CytokineEngine(engine)
+alerts = cyto.check()
+
+# Immutable audit trail
 chain = SpinaChain()
-chain.add_block({"event": "device_joined", "mac": "aa:bb:cc:dd:ee:ff"})
-chain.verify_block(chain.last_block["block_hash"])  # True — the chain is intact
+chain.add_block({"type": "scan", "organs_found": 5})
+
+# 3D cockpit
+start_dashboard(port=8080)       # http://localhost:8080
 ```
 
-### Cytokine — Immune System
+---
 
-Cytokine watches baseline behavior and scores deviations. It doesn't need rules — it learns what "normal" looks like from passive observation and flags the unfamiliar.
+## Requirements
 
-- **Zero configuration**: no thresholds to set, no signatures to maintain
-- **Self/Non-self**: distinguishes legitimate topology changes from intrusion
-- **Continuous learning**: adapts as your infrastructure evolves
-
-### Synapse — Inter-Agent Connection
-
-Synapse lets NOVA agents discover each other and share intelligence. One agent detects an anomaly → all agents are immunized. Built on a lightweight pub/sub mesh with cryptographic identity.
+Python 3.10+, Flask >=3.0, Scapy >=2.5, NetworkX >=3.0, Cryptography >=41.0.
 
 ---
 
 ## Paper Map
 
-Every module maps to a 0DATA academic paper:
+Every NOVA module corresponds to a peer-reviewed paper available on Zenodo:
 
-| SDK Module | Paper | Title |
-|-----------|-------|-------|
-| SPINA | [Paper 003](https://0data.fr/paper/003) | Spinal Memory — Append-Only Infrastructure Graph |
-| Cytokine | [Paper 004](https://0data.fr/paper/004) | Digital Immune System — Anomaly Detection Without Signatures |
-| Synapse | [Paper 005](https://0data.fr/paper/005) | Synaptic Grafting — Inter-Agent Communication Protocol |
-| Cockpit | [Paper 006](https://0data.fr/paper/006) | 3D Organism Visualization |
+| Module | Paper | Zenodo |
+|--------|-------|--------|
+| SPINA | 006 — SPINA: Spinal Column of Digital Infrastructure | DOI pending |
+| Cytokine | 005 — Resilience: Digital Immune System | DOI pending |
+| Synapse | 003 — The Nervous System of Infrastructure | DOI pending |
+| Cockpit | 003 — Section 3.3: The Molecular Cockpit | DOI pending |
 
-Full mapping: [docs/PAPER_MAP.md](docs/PAPER_MAP.md)
-
----
-
-## Documentation
-
-- [Architecture Overview](docs/ARCHITECTURE.md) — design principles, data flow
-- [API Reference](docs/API.md) — complete REST endpoint documentation
-- [Paper Map](docs/PAPER_MAP.md) — academic paper → code mapping
-- [Contributing](CONTRIBUTING.md) — how to graft your own modules
-
----
-
-## Philosophy
-
-NOVA is built on a simple principle: **the network is already alive**. We don't impose structure — we read the structure that's already there. Like a physician who observes before intervening, NOVA listens first.
-
-- **Passive by default** — zero packets sent during discovery
-- **Graft, don't replace** — works alongside existing tooling
-- **Immutable memory** — blockchain-backed audit trail
-- **Open source** — MIT license, no strings attached
+Papers: https://0data.fr/papers
 
 ---
 
 ## License
 
-MIT © [0DATA Lab](https://0data.fr)
+MIT License — see [LICENSE](LICENSE).
 
----
+NOVA is open source. The molecular cockpit, passive discovery, and core SDK are free to use, modify, and distribute. Commercial features (unlimited scanning, multi-instance, data export) require a license.
 
-<p align="center">
-  <sub>Part of the <a href="https://0data.fr">0DATA</a> ecosystem — Know &middot; Protect &middot; Remember</sub><br>
-  <sub><a href="docs/">Documentation Site</a> with pastel glassmorphism design</sub>
-</p>
+0DATA Lab — https://0data.fr
