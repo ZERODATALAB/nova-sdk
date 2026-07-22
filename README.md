@@ -133,7 +133,7 @@ NOVA is open source and independent. Two ways to help:
 
 | You want to... | → |
 |---|---|
-| **Offrir un café** ☕ | [Soutenir financièrement](https://buy.stripe.com/aEU9Ej0QE8oIgchangeME) — chaque geste compte |
+| **Offrir un café** ☕ | [Soutenir financièrement](https://buy.stripe.com/cNi14g7pP2Rpg8Sg6F14402) — chaque geste compte |
 | **Contribuer au code** 🧬 | [Issues](https://github.com/ZERODATALAB/nova-sdk/issues) · [Pull Requests](https://github.com/ZERODATALAB/nova-sdk/pulls) · [Discussions](https://github.com/ZERODATALAB/nova-sdk/discussions) |
 
 Le labo lit chaque PR. Les bonnes idées finissent greffées.
